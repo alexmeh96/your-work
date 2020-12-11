@@ -1,6 +1,7 @@
 package com.coder.yourwork.controller;
 
 import com.coder.yourwork.service.UserDetailsImpl;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,5 +22,9 @@ public class MainControl {
         return "main";
     }
 
-
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/admin")
+    public String userList() {
+        return "admin";
+    }
 }

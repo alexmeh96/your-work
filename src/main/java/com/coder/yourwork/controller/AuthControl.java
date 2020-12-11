@@ -7,10 +7,14 @@ import com.coder.yourwork.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.validation.Valid;
+import java.net.http.HttpRequest;
 import java.util.Collections;
 import java.util.Map;
 
@@ -32,6 +36,12 @@ public class AuthControl {
         return "login";
     }
 
+    @GetMapping("/loginError")
+    public String loginPage(Map<String, Object> model) {
+        model.put("messageError", "No correct email or password!");
+        return "login";
+    }
+
 //    @PostMapping("/login")
 //    public String signIn(UserDto userDto, Map<String, Object> model) {
 //
@@ -39,26 +49,28 @@ public class AuthControl {
 //    }
 
     @GetMapping("/registration")
-    public String registration(Map<String, Object> model) {
-        model.put("message", "");
+    public String registration() {
         return "registration";
     }
 
     @PostMapping("/registration")
-    public String addUser(UserDto userDto, Map<String, Object> model) {
-        User user = authService.findUser(userDto.getUsername());
+    public String addUser(@Valid UserDto userDto, BindingResult bindingResult, Model model) {
 
-        if (user != null) {
-            model.put("message", "User exists!");
+        if (userDto.getPassword() != null && !userDto.getPassword().equals(userDto.getPassword2())) {
+            model.addAttribute("passwordError", "Password are different!");
+        }
+
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
+            model.mergeAttributes(errors);
+
             return "registration";
         }
 
-        User newUser = new User(
-                userDto.getUsername(),
-                passwordEncoder.encode(userDto.getPassword()),
-                Collections.singleton(Role.USER)
-        );
-        authService.addUser(newUser);
+        if (!authService.addUser(userDto)) {
+            model.addAttribute("emailError", "User exists!");
+            return "registration";
+        }
 
         return "redirect:/login";
     }

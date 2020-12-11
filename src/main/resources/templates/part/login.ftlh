@@ -1,14 +1,35 @@
-<#macro login path>
+<#macro login path isRegisterForm>
     <form action="${path}" method="post">
         <div>
-            <label>Email: <input type="email" name="username" /></label>
+            <label>Email: <input type="email" name="email"/></label>
+            <#if emailError??>
+                <div>
+                    ${emailError}
+                </div>
+            </#if>
         </div>
         <div>
-            <label>Password: <input type="password" name="password" /></label>
+            <label>Password: <input type="password" name="password"/></label>
+            <#if passwordError??>
+                <div>
+                    ${passwordError}
+                </div>
+            </#if>
         </div>
-        <input type="hidden" name="_csrf" value="${_csrf.token}" />
+        <#if isRegisterForm>
+            <div>
+                <label>Password: <input type="password" name="password2"/></label>
+                <#if password2Error??>
+                    <div>
+                        ${password2Error}
+                    </div>
+                </#if>
+            </div>
+        </#if>
+        <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+        <#if !isRegisterForm><a href="/registration">Add new user</a></#if>
         <div>
-            <input type="submit" value="Sign in">
+            <button type="submit"><#if isRegisterForm>Create<#else>Sign In</#if></button>
         </div>
 
     </form>
@@ -16,7 +37,7 @@
 
 <#macro logout>
     <form action="/logout" method="post">
-        <input type="hidden" name="_csrf" value="${_csrf.token}" />
-        <input type="submit" value="Sign out" />
+        <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+        <input type="submit" value="Sign out"/>
     </form>
 </#macro>

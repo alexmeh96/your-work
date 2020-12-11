@@ -2,7 +2,5 @@
 <#import "part/login.ftlh" as l>
 
 <@c.page>
-    <p>Login page</p>
-    ${messageError?ifExists}
-    <@l.login "/login" false/>
+    <p>Admin page</p>
 </@c.page>

@@ -1,6 +1,7 @@
 package com.coder.yourwork.service;
 
 import com.coder.yourwork.model.Role;
+import com.coder.yourwork.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,14 +10,22 @@ import java.util.Set;
 
 public class UserDetailsImpl implements UserDetails {
 
+    private Long id;
     private String email;
     private String password;
     private Set<Role> roles;
 
-    public UserDetailsImpl(String email, String password, Set<Role> roles) {
-        this.email = email;
-        this.password = password;
-        this.roles = roles;
+
+
+    public UserDetailsImpl(User user) {
+        this.id = user.getId();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.roles = user.getRoles();
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
