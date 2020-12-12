@@ -38,6 +38,10 @@ public class OrderService {
         return orderRepo.findAll();
     }
 
+    public List<Category> allCategory() {
+        return categoryRepo.findAll();
+    }
+
 
     @Transactional
     public boolean createOrder(User user, OrderDto orderDto) {

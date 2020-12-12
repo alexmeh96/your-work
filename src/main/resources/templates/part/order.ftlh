@@ -15,12 +15,19 @@
             </#if>
         </div>
         <div>
-            <label>Category <input type="text" name="categoryName" /></label>
-            <#if categoryNameError??>
-                <div>
-                    ${categoryNameError}
-                </div>
-            </#if>
+<#--            <label>Category <input type="text" name="categoryName" /></label>-->
+<#--            <#if categoryNameError??>-->
+<#--                <div>-->
+<#--                    ${categoryNameError}-->
+<#--                </div>-->
+<#--            </#if>-->
+            <label for="category">Category:</label>
+            <select id="category" name="categoryName">
+                <#list categories as category>
+                    <option value="${category.name}">${category.name}</option>
+                </#list>
+            </select>
+
         </div>
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
 

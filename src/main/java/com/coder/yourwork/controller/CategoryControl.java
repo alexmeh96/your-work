@@ -7,6 +7,7 @@ import com.coder.yourwork.model.User;
 import com.coder.yourwork.service.CategoryService;
 import com.coder.yourwork.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,13 +44,15 @@ public class CategoryControl {
         return "category";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/create")
     public String createCategory() {
         return "createCategory";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/create")
-    public String addOrder(@Valid CategoryDto categoryDto, BindingResult bindingResult,
+    public String addCategory(@Valid CategoryDto categoryDto, BindingResult bindingResult,
                            Model model) {
 
         if (bindingResult.hasErrors()) {
