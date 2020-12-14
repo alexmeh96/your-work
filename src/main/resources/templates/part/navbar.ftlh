@@ -1,13 +1,35 @@
+<#import "login.ftlh" as l>
 <#include "security.ftlh">
+
 <#macro navbar>
     <div>
-        <a href="/order/create">Create order</a>
-        <a href="/category/create">Create category</a>
-        <a href="/category/all">Categories</a>
-        <a href="/order/all">Orders</a>
-        <a href="/order/user">My orders</a>
-        <a href="/profile">My profile</a>
+        <a href="/">Main</a>
+        <a href="/order/category">Задания</a>
+        <a href="/executor/category">Исполнители</a>
+        <#if user??>
+            <a href="/order/create">Создать задание</a>
+            <a href="/order/user">Мои задания</a>
+            <a href="/profile">Мой профиль</a>
+        </#if>
+        <#if isAdmin>
+            <a href="/category/create">Создать категорию</a>
+        </#if>
+
+        <#if user??>
+            <@l.logout />
+        <#else>
+            <a href="/login">Вход</a>
+        </#if>
+
         <p>${name}</p>
     </div>
+
+</#macro>
+<#macro mes>
+    <#if message??>
+        <div>
+            <b>${message}</b>
+        </div>
+    </#if>
 
 </#macro>

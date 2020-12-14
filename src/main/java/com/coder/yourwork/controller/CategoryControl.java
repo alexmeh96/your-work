@@ -1,24 +1,15 @@
 package com.coder.yourwork.controller;
 
 import com.coder.yourwork.dto.CategoryDto;
-import com.coder.yourwork.dto.OrderDto;
-import com.coder.yourwork.model.Category;
-import com.coder.yourwork.model.User;
 import com.coder.yourwork.service.CategoryService;
-import com.coder.yourwork.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -34,20 +25,23 @@ public class CategoryControl {
 
 
 
-    @GetMapping("/all")
-    public String allCategory(Map<String, Object> model) {
-
-        List<Category> categoryList = categoryService.allCategory();
-
-        model.put("categories", categoryList);
-
-        return "category";
-    }
+//    @GetMapping("/all")
+//    public String allCategory(Map<String, Object> model) {
+//
+//        List<Category> categoryList = categoryService.allCategory();
+//
+//        model.put("categories", categoryList);
+//
+//        return "category";
+//    }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/create")
-    public String createCategory() {
-        return "createCategory";
+    public String createCategory(@RequestParam(required = false) boolean success, Model model) {
+        if (success) {
+            model.addAttribute("message", "Category was created");
+        }
+        return "category";
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -58,19 +52,18 @@ public class CategoryControl {
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
             model.mergeAttributes(errors);
-
-            return "createCategory";
+            return "category";
         }
 
         if (categoryService.categoryExist(categoryDto)) {
             model.addAttribute("categoryError", "Category already exist!");
-            return "createCategory";
+            return "category";
         }
 
         if (!categoryService.createCategory(categoryDto)) {
             model.addAttribute("categoryError", "Category not create!");
-            return "createCategory";
+            return "category";
         }
-        return "createCategory";
+        return "redirect:/category/create?success=true";
     }
 }

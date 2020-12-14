@@ -15,13 +15,15 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private Set<Role> roles;
 
-
-
     public UserDetailsImpl(User user) {
         this.id = user.getId();
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.roles = user.getRoles();
+    }
+
+    public boolean isAdmin() {
+        return roles.contains(Role.ADMIN);
     }
 
     public Long getId() {

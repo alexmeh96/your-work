@@ -25,3 +25,10 @@
     </form>
 
 </#macro>
+
+<#macro showCategory path>
+    <p><a href="${path}/all">all</a></p>
+    <#list categories as category>
+        <p><a href="${path}/${category.id}">${category.name}</a></p>
+    </#list>
+</#macro>

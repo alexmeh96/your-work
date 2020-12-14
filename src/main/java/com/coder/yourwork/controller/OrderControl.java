@@ -1,7 +1,6 @@
 package com.coder.yourwork.controller;
 
 import com.coder.yourwork.dto.OrderDto;
-import com.coder.yourwork.dto.UserDto;
 import com.coder.yourwork.model.Category;
 import com.coder.yourwork.model.Order;
 import com.coder.yourwork.model.User;
@@ -29,11 +28,26 @@ public class OrderControl {
         this.orderService = orderService;
     }
 
-    @GetMapping("/all")
+    @GetMapping("/category/all")
     public String allOrder(Map<String, Object> model) {
         List<Order> orderList = orderService.allOrder();
         model.put("orders", orderList);
-        return "order";
+        return "orderList";
+    }
+
+    @GetMapping("/category")
+    public String categoryList(Model model) {
+        List<Category> categoryList = orderService.allCategory();
+        model.addAttribute("categories", categoryList);
+        model.addAttribute("isCategory", true);
+        return "orderList";
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public String categoryOrder(@PathVariable Long categoryId, Model model) {
+        List<Order> orderList = orderService.categoryOrder(categoryId);
+        model.addAttribute("orders", orderList);
+        return "orderList";
     }
 
     @GetMapping("/user")
@@ -41,7 +55,7 @@ public class OrderControl {
 
         List<Order> orderList = orderService.userOrder(userDetails.getId());
         model.put("orders", orderList);
-        return "order";
+        return "orderList";
     }
 
     @GetMapping("/create")
@@ -52,7 +66,8 @@ public class OrderControl {
         }
         List<Category> categories = orderService.allCategory();
         model.put("categories", categories);
-        return "createOrder";
+        model.put("isCreate", true);
+        return "order";
     }
 
     @PostMapping("/create")
@@ -64,20 +79,69 @@ public class OrderControl {
 
         User user = orderService.findUser(userDetails.getUsername());
 
+        model.addAttribute("isCreate", true);
+
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
             model.mergeAttributes(errors);
 
-            return "createOrder";
+            return "order";
         }
 
         if (!orderService.createOrder(user, orderDto)) {
             model.addAttribute("orderError", "Order not create!");
-            return "createOrder";
+            return "order";
         }
-
-
         return "redirect:/order/create?success=true";
     }
+
+    @GetMapping("/update/{orderId}")
+    public String updateOrder(@RequestParam(required = false) boolean success,
+                              @PathVariable(name = "orderId", required = false) Order order,
+                              Model model) {
+        if (success) {
+            model.addAttribute("message", "Order was update");
+        }
+        List<Category> categories = orderService.allCategory();
+        model.addAttribute("categories", categories);
+        model.addAttribute("isCreate", false);
+        model.addAttribute("order", order);
+        return "order";
+    }
+
+    @PostMapping("/update")
+    public String editOrder(@RequestParam(name = "orderId") Order order,
+                            @Valid OrderDto orderDto, BindingResult bindingResult,
+                            Model model) {
+
+        List<Category> categories = orderService.allCategory();
+        model.addAttribute("categories", categories);
+        model.addAttribute("isCreate", false);
+        model.addAttribute("order", order);
+
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
+            model.mergeAttributes(errors);
+
+            return "order";
+        }
+
+        if (!orderService.updateOrder(order, orderDto)) {
+            model.addAttribute("orderError", "Order not update!");
+            return "order";
+        }
+        return "redirect:/order/update/" + order.getId() + "?success=true";
+    }
+
+    @PostMapping("/subscribe")
+    public String subscribeOrder(@RequestParam(name = "orderId", required = false) Order order, @RequestParam(name = "userId") User user ) {
+        if (!orderService.subscribeUser(order, user)) {
+
+        }
+        System.out.println(order.getDescribe());
+        return "redirect:/order/category";
+    }
+
+
 
 }

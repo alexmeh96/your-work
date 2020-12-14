@@ -1,4 +1,4 @@
-<#macro order path isCreate>
+<#macro orderForm path isCreate>
 
     <#if orderError??>
         <div>
@@ -7,33 +7,46 @@
     </#if>
     <form action="${path}" method="post">
         <div>
-            <label>Describe <input type="text" name="describe" /></label>
+            <label>Describe <input type="text" name="describe" <#if order??>value="${order.describe}"</#if>/></label>
             <#if describeError??>
                 <div>
                     ${describeError}
                 </div>
             </#if>
         </div>
+
         <div>
-<#--            <label>Category <input type="text" name="categoryName" /></label>-->
-<#--            <#if categoryNameError??>-->
-<#--                <div>-->
-<#--                    ${categoryNameError}-->
-<#--                </div>-->
-<#--            </#if>-->
             <label for="category">Category:</label>
             <select id="category" name="categoryName">
-                <#list categories as category>
-                    <option value="${category.name}">${category.name}</option>
-                </#list>
-            </select>
+                <#if order??>
+                    <#list categories as category>
+                        <option value="${category.name}"
+                                <#if category.name == order.category.name >selected</#if>>${category.name}</option>
+                    </#list>
+                <#else>
+                    <option disabled selected>Выберите категорию</option>
 
+                    <#list categories as category>
+                        <option value="${category.name}">${category.name}</option>
+                    </#list>
+                </#if>
+            </select>
         </div>
+
+        <#if categoryNameError??>
+            <div>
+                ${categoryNameError}
+            </div>
+        </#if>
+
+        <#if order??>
+            <input type="hidden" name="orderId" value="${order.id}"/>
+        </#if>
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
 
 
         <div>
-            <button type="submit"><#if isCreate>Create<#else>Edit</#if></button>
+            <button type="submit"><#if isCreate>Создать<#else>Изменить</#if></button>
         </div>
 
     </form>

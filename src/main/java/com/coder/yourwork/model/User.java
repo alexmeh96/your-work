@@ -29,6 +29,10 @@ public class User {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Order> orders;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "executor_id")
+    private Executor executor;
+
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)

@@ -27,11 +27,11 @@ public class MainControl {
         return "greeting";
     }
 
-    @GetMapping("/main")
-    public String main(@AuthenticationPrincipal UserDetailsImpl userDetails, Map<String, Object> model) {
-        model.put("email", userDetails.getUsername());
-        return "main";
-    }
+//    @GetMapping("/main")
+//    public String main(@AuthenticationPrincipal UserDetailsImpl userDetails, Map<String, Object> model) {
+//        model.put("email", userDetails.getUsername());
+//        return "main";
+//    }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/admin")
@@ -39,10 +39,5 @@ public class MainControl {
         return "admin";
     }
 
-    @GetMapping("/profile")
-    public String profile(@AuthenticationPrincipal UserDetailsImpl userDetails,  Model model) {
-        Profile profile = userService.getUserProfile(userDetails.getId());
-        model.addAttribute("profile", profile);
-        return "profile";
-    }
+
 }

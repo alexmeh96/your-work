@@ -1,10 +1,7 @@
 package com.coder.yourwork.service;
 
 import com.coder.yourwork.dto.OrderDto;
-import com.coder.yourwork.model.Category;
-import com.coder.yourwork.model.Order;
-import com.coder.yourwork.model.Role;
-import com.coder.yourwork.model.User;
+import com.coder.yourwork.model.*;
 import com.coder.yourwork.repo.CategoryRepo;
 import com.coder.yourwork.repo.OrderRepo;
 import com.coder.yourwork.repo.UserRepo;
@@ -67,5 +64,30 @@ public class OrderService {
 
     public List<Order> userOrder(Long userId) {
         return orderRepo.findAllByAuthor_Id(userId);
+    }
+
+    public List<Order> categoryOrder(Long categoryId) {
+        return orderRepo.findAllByCategory_Id(categoryId);
+    }
+
+    public boolean subscribeUser(Order order, User user) {
+        Executor executor = user.getExecutor();
+        order.getExecutors().add(executor);
+        executor.getOrders().add(order);
+        orderRepo.save(order);
+        return true;
+    }
+
+    public boolean updateOrder(Order order, OrderDto orderDto) {
+        Category category = categoryRepo.findByName(orderDto.getCategoryName()).orElse(null);
+
+        if (category == null) return false;
+
+        order.setCategory(category);
+        order.setDescribe(orderDto.getDescribe());
+
+        orderRepo.save(order);
+
+        return true;
     }
 }

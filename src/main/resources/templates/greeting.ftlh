@@ -5,5 +5,5 @@
     <@n.navbar />
 
     <h1>Greeting page!</h1>
-    <a href="/login">Sign in</a>
+<#--    <a href="/login">Sign in</a>-->
 </@c.page>
