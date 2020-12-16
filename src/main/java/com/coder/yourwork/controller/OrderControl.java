@@ -1,9 +1,8 @@
 package com.coder.yourwork.controller;
 
 import com.coder.yourwork.dto.OrderDto;
-import com.coder.yourwork.model.Category;
-import com.coder.yourwork.model.Order;
-import com.coder.yourwork.model.User;
+import com.coder.yourwork.model.*;
+import com.coder.yourwork.service.ExecutorService;
 import com.coder.yourwork.service.OrderService;
 import com.coder.yourwork.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +21,56 @@ import java.util.Map;
 public class OrderControl {
 
     private final OrderService orderService;
+    @Autowired
+    private ExecutorService executorService;
 
     @Autowired
     public OrderControl(OrderService orderService) {
         this.orderService = orderService;
     }
 
-    @GetMapping("/category/all")
-    public String allOrder(Map<String, Object> model) {
-        List<Order> orderList = orderService.allOrder();
+    @GetMapping("/{orderId}")
+    public String getOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                           @PathVariable(name = "orderId") Order order,
+                           @RequestParam(required = false) boolean subscribe,
+                           @RequestParam(required = false) boolean confirm,
+                           @RequestParam(required = false) boolean done,
+                           Model model) {
+
+        if (subscribe) {
+            model.addAttribute("message", "Вы откликнулись на задание");
+        } else if(confirm) {
+            model.addAttribute("message", "Вы подтвердили исполнителя");
+        } else if(done) {
+            model.addAttribute("message", "Вы отметили задание как выполненное");
+        }
+
+        Executor executor = executorService.getExecutorByAuthId(userDetails.getId());
+
+        model.addAttribute("order", order);
+        model.addAttribute("executor", executor);
+        model.addAttribute("isSubscribe", orderService.existsBySubscribersIsAuthor_Id(order, executor));
+        return "orderId";
+    }
+
+    @GetMapping("/offerList/{executorId}")
+    public String getOfferList(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable(name = "executorId") Executor executor, Model model) {
+        model.addAttribute("isOffer", true);
+        List<Order> orderList = orderService.userOrderStatus(userDetails.getId(), Status.ACTIVE);
+        model.addAttribute("orders", orderList);
+        model.addAttribute("executor", executor);
+        return "orderList";
+    }
+
+    @PostMapping("/offer")
+    public String addOffer(@RequestParam(name = "orderId") Order order, @RequestParam(name = "executorId") Executor executor ) {
+        orderService.addOffer(order, executor);
+        return "redirect:/executor/" + executor.getId() + "?offerSuccess=true";
+    }
+
+    @GetMapping("/category/active")
+    public String getActiveOrder(Map<String, Object> model) {
+        List<Order> orderList = orderService.getOrdersByStatus(Status.ACTIVE);
         model.put("orders", orderList);
         return "orderList";
     }
@@ -44,14 +84,14 @@ public class OrderControl {
     }
 
     @GetMapping("/category/{categoryId}")
-    public String categoryOrder(@PathVariable Long categoryId, Model model) {
+    public String getOrdersByCategory(@PathVariable Long categoryId, Model model) {
         List<Order> orderList = orderService.categoryOrder(categoryId);
         model.addAttribute("orders", orderList);
         return "orderList";
     }
 
     @GetMapping("/user")
-    public String userOrders(@AuthenticationPrincipal UserDetailsImpl userDetails, Map<String, Object> model) {
+    public String ownOrders(@AuthenticationPrincipal UserDetailsImpl userDetails, Map<String, Object> model) {
 
         List<Order> orderList = orderService.userOrder(userDetails.getId());
         model.put("orders", orderList);
@@ -138,8 +178,35 @@ public class OrderControl {
         if (!orderService.subscribeUser(order, user)) {
 
         }
-        System.out.println(order.getDescribe());
-        return "redirect:/order/category";
+        return "redirect:/order/"+order.getId()+"?subscribe=true";
+    }
+
+    @PostMapping("/confirm")
+    public String confirmOrder(@RequestParam(name = "orderId") Order order, @RequestParam(name = "subscribeId") Executor executor ) {
+        if (!orderService.confirm(order, executor)) {
+
+        }
+        return "redirect:/order/"+order.getId()+"?confirm=true";
+    }
+
+    @PostMapping("/done")
+    public String doneOrder(@RequestParam(name = "orderId", required = false) Order order) {
+        if (!orderService.doneOrder(order)) {
+
+        }
+        return "redirect:/order/"+order.getId()+"?done=true";
+    }
+
+    @PostMapping("/offerAnswer")
+    public String answerOffer(@RequestParam(name = "orderId") Order order,
+                              @RequestParam(name = "executorId", required = false) Executor executor,
+                              @RequestParam boolean getOffer) {
+        if (getOffer) {
+            orderService.confirm(order, executor);
+            return "redirect:/executor/" + executor.getId() + "?takeOffer=true";
+        }
+        orderService.reject(order);
+        return "redirect:/executor/" + executor.getId() + "?rejectOffer=true";
     }
 
 

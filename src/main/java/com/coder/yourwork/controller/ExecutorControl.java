@@ -1,10 +1,7 @@
 package com.coder.yourwork.controller;
 
 import com.coder.yourwork.dto.ExecutorDto;
-import com.coder.yourwork.model.Category;
-import com.coder.yourwork.model.Executor;
-import com.coder.yourwork.model.Order;
-import com.coder.yourwork.model.User;
+import com.coder.yourwork.model.*;
 import com.coder.yourwork.repo.CategoryRepo;
 import com.coder.yourwork.service.CategoryService;
 import com.coder.yourwork.service.ExecutorService;
@@ -36,9 +33,29 @@ public class ExecutorControl {
         this.userService = userService;
     }
 
-    @GetMapping("/category/all")
+    @GetMapping("/{executorId}")
+    public String getExecutor(@PathVariable(name = "executorId") Executor executor,
+                              @RequestParam(required = false) boolean offerSuccess,
+                              @RequestParam(required = false) boolean takeOffer,
+                              @RequestParam(required = false) boolean rejectOffer,
+                              Model model) {
+
+
+        if (offerSuccess) {
+            model.addAttribute("message", "задание было предложено");
+        } else if (takeOffer) {
+            model.addAttribute("message", "вы приняли задание");
+        } else if (rejectOffer) {
+            model.addAttribute("message", "вы отклонили задание");
+        }
+        model.addAttribute("executor", executor);
+
+        return "executorId";
+    }
+
+    @GetMapping("/category/active")
     public String allOrder(Map<String, Object> model) {
-        List<Executor> executorList = executorService.allExecutors();
+        List<Executor> executorList = executorService.statusExecutors(Status.ACTIVE);
         model.put("executors", executorList);
         return "executorList";
     }

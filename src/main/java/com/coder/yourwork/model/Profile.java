@@ -14,10 +14,7 @@ public class Profile {
     @GeneratedValue
     private Long id;
 
-    private String FirstName;
-    private String LastName;
 
-    private String PhoneNumber;
 
     @OneToOne(mappedBy = "profile", cascade = CascadeType.ALL)
     private User auth;

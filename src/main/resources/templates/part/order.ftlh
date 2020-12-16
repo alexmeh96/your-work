@@ -7,6 +7,14 @@
     </#if>
     <form action="${path}" method="post">
         <div>
+            <label>Название <input type="text" name="name" <#if order??>value="${order.name}"</#if>/></label>
+            <#if nameError??>
+                <div>
+                    ${nameError}
+                </div>
+            </#if>
+        </div>
+        <div>
             <label>Describe <input type="text" name="describe" <#if order??>value="${order.describe}"</#if>/></label>
             <#if describeError??>
                 <div>

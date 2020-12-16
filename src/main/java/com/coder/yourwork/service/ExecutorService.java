@@ -1,9 +1,7 @@
 package com.coder.yourwork.service;
 
 import com.coder.yourwork.dto.ExecutorDto;
-import com.coder.yourwork.model.Category;
-import com.coder.yourwork.model.Executor;
-import com.coder.yourwork.model.User;
+import com.coder.yourwork.model.*;
 import com.coder.yourwork.repo.CategoryRepo;
 import com.coder.yourwork.repo.ExecutorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +36,8 @@ public class ExecutorService {
                 executorDto.getLastName(),
                 executorDto.getDescribe()
         );
+
+        executor.setStatus(Status.ACTIVE);
 
         executor.setAuth(user);
         user.setExecutor(executor);
@@ -77,4 +77,19 @@ public class ExecutorService {
     public List<Executor> allExecutors() {
         return executorRepo.findAll();
     }
+
+    public List<Executor> statusExecutors(Status status) {
+        return executorRepo.findAllByStatus(status);
+    }
+
+    public Executor getExecutorByAuthId(Long id) {
+        return executorRepo.findAllByAuth_Id(id);
+    }
+
+//    public void addOrder(Order order, Executor executor) {
+//        order.setStatus(Status.PROCESSING);
+//        order.setOfferExecutor(null);
+//        order.setExecutor(executor);
+//
+//    }
 }

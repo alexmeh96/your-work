@@ -27,7 +27,7 @@
 </#macro>
 
 <#macro showCategory path>
-    <p><a href="${path}/all">all</a></p>
+    <p><a href="${path}/active">все задания</a></p>
     <#list categories as category>
         <p><a href="${path}/${category.id}">${category.name}</a></p>
     </#list>

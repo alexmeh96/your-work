@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,7 +28,7 @@ public class User {
     private Profile profile;
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
-    private List<Order> orders;
+    private List<Order> ownOrders = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "executor_id")

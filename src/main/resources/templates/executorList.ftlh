@@ -13,28 +13,28 @@
         <h1>Executors</h1>
         <div>Категория: ${category.name}</div>
         <#list category.executors as executor>
-            <div>Имя: ${executor.firstName}</div>
+            <div>Имя:<a href="/executor/${executor.id}">${executor.firstName}</a></div>
             <div>Фамилия: ${executor.lastName}</div>
             <div>Описание: ${executor.describe}</div>
-<#--            <form action="/order/subscribe" method="post">-->
-<#--                <input type="hidden" name="orderId" value="${order.id}">-->
-<#--                <input type="hidden" name="userId" value="${currentUserId}">-->
-<#--                <input type="hidden" name="_csrf" value="${_csrf.token}"/>-->
-<#--                <#if user??>-->
-<#--                    <#if order.author.id != currentUserId>-->
-<#--                        <button type="submit">Откликнуться</button>-->
-<#--                    <#else>-->
-<#--                        <a href="/order/update/${order.id}">Изменить</a>-->
-<#--                    </#if>-->
-<#--                </#if>-->
-<#--            </form>-->
+        <#--            <form action="/order/subscribe" method="post">-->
+        <#--                <input type="hidden" name="orderId" value="${order.id}">-->
+        <#--                <input type="hidden" name="userId" value="${currentUserId}">-->
+        <#--                <input type="hidden" name="_csrf" value="${_csrf.token}"/>-->
+        <#--                <#if user??>-->
+        <#--                    <#if order.author.id != currentUserId>-->
+        <#--                        <button type="submit">Откликнуться</button>-->
+        <#--                    <#else>-->
+        <#--                        <a href="/order/update/${order.id}">Изменить</a>-->
+        <#--                    </#if>-->
+        <#--                </#if>-->
+        <#--            </form>-->
             <hr/>
         </#list>
     <#elseif executors??>
         <h1>Executors</h1>
         <#list executors as executor>
-<#--            <div>Категория: ${category.name}</div>-->
-            <div>Имя: ${executor.firstName}</div>
+        <#--            <div>Категория: ${category.name}</div>-->
+            <div>Имя:<a href="/executor/${executor.id}">${executor.firstName}</a></div>
             <div>Фамилия: ${executor.lastName}</div>
             <div>Описание: ${executor.describe}</div>
         <#--            <form action="/order/subscribe" method="post">-->

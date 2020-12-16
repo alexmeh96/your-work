@@ -35,6 +35,10 @@ public class OrderService {
         return orderRepo.findAll();
     }
 
+    public List<Order> getOrdersByStatus(Status status) {
+        return orderRepo.findAllByStatus(status);
+    }
+
     public List<Category> allCategory() {
         return categoryRepo.findAll();
     }
@@ -48,14 +52,16 @@ public class OrderService {
         if (category == null) return false;
 
         Order order = new Order(
+                orderDto.getName(),
                 orderDto.getDescribe()
         );
+        order.setStatus(Status.ACTIVE);
 
         order.setCategory(category);
         category.getOrders().add(order);
 
         order.setAuthor(user);
-        user.getOrders().add(order);
+        user.getOwnOrders().add(order);
 
         orderRepo.save(order);
         return true;
@@ -72,8 +78,8 @@ public class OrderService {
 
     public boolean subscribeUser(Order order, User user) {
         Executor executor = user.getExecutor();
-        order.getExecutors().add(executor);
-        executor.getOrders().add(order);
+        order.getSubscribers().add(executor);
+        executor.getSubscriptions().add(order);
         orderRepo.save(order);
         return true;
     }
@@ -84,10 +90,49 @@ public class OrderService {
         if (category == null) return false;
 
         order.setCategory(category);
+        order.setName(orderDto.getName());
         order.setDescribe(orderDto.getDescribe());
 
         orderRepo.save(order);
 
         return true;
+    }
+
+    public boolean confirm(Order order, Executor executor) {
+        order = orderRepo.findById(order.getId()).orElse(null);
+        order.setExecutor(executor);
+        order.setOfferExecutor(null);
+        order.getSubscribers().clear();
+        order.setStatus(Status.PROCESSING);
+        orderRepo.save(order);
+        return true;
+    }
+
+    public boolean existsBySubscribersIsAuthor_Id(Order order, Executor executor) {
+        return orderRepo.existsByIdAndSubscribers(order.getId(), executor);
+    }
+
+    public boolean doneOrder(Order order) {
+        order.setStatus(Status.DONE);
+        orderRepo.save(order);
+        return true;
+    }
+
+    public List<Order> userOrderStatus(Long id, Status status) {
+
+        return orderRepo.findAllByAuthor_IdAndStatus(id, status);
+    }
+
+    public void addOffer(Order order, Executor executor) {
+        order.setStatus(Status.OFFER);
+        order.setOfferExecutor(executor);
+        executor.getOffers().add(order);
+        orderRepo.save(order);
+    }
+
+    public void reject(Order order) {
+        order.setStatus(Status.ACTIVE);
+        order.setOfferExecutor(null);
+        orderRepo.save(order);
     }
 }

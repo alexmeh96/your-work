@@ -21,14 +21,17 @@ public class Executor {
     private String lastName;
     private String describe;
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(	name = "executor_category",
             joinColumns = @JoinColumn(name = "executor_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "executors")
-    private List<Order> orders = new ArrayList<>();
+//    @ManyToMany(mappedBy = "executors")
+//    private List<Order> orders = new ArrayList<>();
 
 //    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 //    @JoinColumn(name = "category_id")
@@ -36,6 +39,15 @@ public class Executor {
 
     @OneToOne(mappedBy = "executor", cascade = CascadeType.ALL)
     private User auth;
+
+    @ManyToMany(mappedBy = "subscribers", cascade = CascadeType.ALL)
+    private List<Order> subscriptions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "executor", cascade = CascadeType.ALL)
+    private List<Order> executions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "offerExecutor", cascade = CascadeType.ALL)
+    private List<Order> offers = new ArrayList<>();
 
     public Executor(String firstName, String lastName, String describe) {
         this.firstName = firstName;
