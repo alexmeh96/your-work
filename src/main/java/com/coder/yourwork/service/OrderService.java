@@ -69,7 +69,7 @@ public class OrderService {
         order.setAuthor(user);
         user.getOwnOrders().add(order);
 
-        profileRepo.save(profile);
+//        profileRepo.save(profile);
         orderRepo.save(order);
         return true;
 
@@ -116,7 +116,7 @@ public class OrderService {
         order.setOfferExecutor(null);
         order.getSubscribers().clear();
         order.setStatus(Status.PROCESSING);
-        profileRepo.save(profile);
+//        profileRepo.save(profile);
         orderRepo.save(order);
         return true;
     }
@@ -131,7 +131,7 @@ public class OrderService {
         profile.setAmountExecutionOrders(profile.getAmountExecutionOrders() - 1);
         order.setStatus(Status.DONE);
         orderRepo.save(order);
-        profileRepo.save(profile);
+//        profileRepo.save(profile);
     }
 
     public void loseOrder(Order order, Executor executor) {
@@ -140,7 +140,7 @@ public class OrderService {
         profile.setAmountExecutionOrders(profile.getAmountExecutionOrders() - 1);
         order.setStatus(Status.LOSE);
         orderRepo.save(order);
-        profileRepo.save(profile);
+//        profileRepo.save(profile);
     }
 
     public List<Order> userOrderStatus(Long id, Status status) {
@@ -171,5 +171,21 @@ public class OrderService {
 
     public List<Order> getOrdersByStatusAndNotAuth(Status status, Long id) {
         return orderRepo.findAllByStatusAndAuthor_IdNot(status, id);
+    }
+
+    public void cancelOrder(Order order) {
+        order.setStatus(Status.ACTIVE);
+        order.setOfferExecutor(null);
+        orderRepo.save(order);
+    }
+
+    public void deleteOrder(Long orderId, Long userId) {
+
+        Profile profile = profileRepo.getProfileByAuth_Id(userId).orElse(null);
+
+        profile.setAmountMakeOrders(profile.getAmountMakeOrders()-1);
+//        profileRepo.save(profile);
+
+        orderRepo.deleteById(orderId);
     }
 }

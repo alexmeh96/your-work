@@ -8,6 +8,7 @@ import com.coder.yourwork.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -46,5 +47,13 @@ public class UserService {
 
     public boolean executorExist(Long userId) {
         return executorRepo.existsByAuth_Id(userId);
+    }
+
+    public List<User> allUser() {
+        return userRepo.findAll();
+    }
+
+    public void deleteUser(Long userId) {
+        userRepo.deleteById(userId);
     }
 }

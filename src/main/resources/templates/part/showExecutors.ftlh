@@ -18,7 +18,7 @@
         <div>Имя:<a href="/executor/${executor.id}">${executor.firstName}</a></div>
         <div>Фамилия: ${executor.lastName}</div>
         <div>Описание: ${executor.describe}</div>
-
+        <a href="/order/offerList/${executor.id}">Предложить задание</a>
         <hr/>
     </#list>
 </#if>

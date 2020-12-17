@@ -6,5 +6,7 @@
     <@n.navbar />
     <h1>Admin page</h1>
     <a href="/category/create">Создать категорию</a>
+    <a href="/category/update">Изменить категорию</a>
+    <a href="/admin/userList">Список пользователей</a>
 
 </@c.page>

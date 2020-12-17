@@ -66,14 +66,22 @@
 
 
                     <#else>
-                        <a href="/order/update/${order.id}">Изменить</a>
-                        <#if order.status.name()=="PROCESSING">
+                        <#if order.status.name()=="ACTIVE">
+                            <p>
+                                <a href="/order/update/${order.id}">Изменить</a>
+                            <form action="/order/delete" method="post">
+                                <input type="hidden" name="orderId" value="${order.id}"/>
+                                <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+                                <button type="submit">Удалить</button>
+                            </form>
+                            </p>
+                        <#elseif order.status.name()=="PROCESSING">
                             <p>status: <b>выполняет задание:</b>
                                 <a href="/executor/${order.executor.id}">${order.executor.firstName}</a>
                             <form action="/order/done" method="post">
                                 <input type="hidden" name="orderId" value="${order.id}"/>
-                            <input type="hidden" name="executorId" value="${order.executor.id}"/>
-                            <input type="hidden" name="doneSuccess" value="true"/>
+                                <input type="hidden" name="executorId" value="${order.executor.id}"/>
+                                <input type="hidden" name="doneSuccess" value="true"/>
                                 <input type="hidden" name="_csrf" value="${_csrf.token}"/>
                                 <button type="submit">Выполнено</button>
                             </form>
@@ -85,6 +93,13 @@
                                 <button type="submit">Провалено</button>
                             </form>
                             </p>
+                        <#elseif order.status.name()=="OFFER">
+                            <p>status: <b>вы предложили задание</b> ${order.offerExecutor.firstName}</p>
+                            <form action="/order/cancel" method="post">
+                                <input type="hidden" name="orderId" value="${order.id}"/>
+                                <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+                                <button type="submit">Отменить</button>
+                            </form>
                         <#elseif order.status.name()=="DONE">
                             <p>status: <b>выполнил задание:</b>
                                 <a href="/executor/${order.executor.id}">${order.executor.firstName}</a>

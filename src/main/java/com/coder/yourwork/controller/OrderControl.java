@@ -126,10 +126,16 @@ public class OrderControl {
     @GetMapping("/user")
     public String ownOrders(@AuthenticationPrincipal UserDetailsImpl userDetails,
                             @RequestParam(required = false) boolean createExecutor,
+                            @RequestParam(required = false) boolean cancel,
+                            @RequestParam(required = false) boolean delete,
                             Model model) {
 
         if (createExecutor) {
-            model.addAttribute("message", "Создайте исполнителя?");
+            model.addAttribute("message", "Создайте исполнителя!");
+        } else if(cancel) {
+            model.addAttribute("message", "Вы оменили предложение задания");
+        } else if (delete) {
+            model.addAttribute("message", "Вы удалили задание");
 
         }
 
@@ -186,6 +192,14 @@ public class OrderControl {
             return "orderDir/order";
         }
         return "redirect:/order/create?success=true";
+    }
+
+    @PostMapping("/delete")
+    public String deleteOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                           @RequestParam Long orderId) {
+        orderService.deleteOrder(orderId, userDetails.getId());
+
+        return "redirect:/order/user?delete=true";
     }
 
     @GetMapping("/update/{orderId}")
@@ -268,6 +282,14 @@ public class OrderControl {
         }
         orderService.reject(order);
         return "redirect:/executor/" + executor.getId() + "?rejectOffer=true";
+    }
+
+    @PostMapping("/cancel")
+    public String answerOffer(@RequestParam(name = "orderId") Order order){
+
+        orderService.cancelOrder(order);
+
+        return "redirect:/order/user?cancel=true";
     }
 
 }

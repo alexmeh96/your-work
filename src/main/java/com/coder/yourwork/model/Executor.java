@@ -30,13 +30,6 @@ public class Executor {
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories = new ArrayList<>();
 
-//    @ManyToMany(mappedBy = "executors")
-//    private List<Order> orders = new ArrayList<>();
-
-//    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-//    @JoinColumn(name = "category_id")
-//    private Category category;
-
     @OneToOne(mappedBy = "executor", cascade = CascadeType.ALL)
     private User auth;
 
