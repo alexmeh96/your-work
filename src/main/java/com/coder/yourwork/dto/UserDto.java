@@ -10,13 +10,14 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class UserDto {
-    @Email(message = "Email is not correct")
-    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Некоректный Email")
+    @NotBlank(message = "Email не должен быть пустым!")
     private String email;
-
-    @NotBlank(message = "Password cannot be empty")
+    @NotBlank(message = "Пароль не должен быть пустым!")
     private String password;
-    @NotBlank(message = "Password confirmation cannot be empty")
     private String password2;
+
+    @NotBlank(message = "Имя не должно быть пустым!")
+    private String name;
 
 }

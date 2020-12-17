@@ -34,23 +34,34 @@ public class OrderControl {
                            @PathVariable(name = "orderId") Order order,
                            @RequestParam(required = false) boolean subscribe,
                            @RequestParam(required = false) boolean confirm,
-                           @RequestParam(required = false) boolean done,
+                           @RequestParam(required = false) boolean doneSuccess,
+                           @RequestParam(required = false) boolean loseSuccess,
+                           @RequestParam(required = false) boolean createExecutor,
                            Model model) {
 
         if (subscribe) {
             model.addAttribute("message", "Вы откликнулись на задание");
-        } else if(confirm) {
+        } else if (confirm) {
             model.addAttribute("message", "Вы подтвердили исполнителя");
-        } else if(done) {
+        } else if (doneSuccess) {
             model.addAttribute("message", "Вы отметили задание как выполненное");
+        } else if (loseSuccess) {
+            model.addAttribute("message", "Вы отметили задание как проваленное");
+        } else if (createExecutor) {
+            model.addAttribute("message", "Создайте исполнителя");
         }
 
         Executor executor = executorService.getExecutorByAuthId(userDetails.getId());
 
+        if (executor == null) {
+            model.addAttribute("isSubscribe", false);
+        } else {
+            model.addAttribute("isSubscribe", orderService.existsByIdAndSubscribers(order, executor));
+        }
+
         model.addAttribute("order", order);
         model.addAttribute("executor", executor);
-        model.addAttribute("isSubscribe", orderService.existsBySubscribersIsAuthor_Id(order, executor));
-        return "orderId";
+        return "orderDir/orderId";
     }
 
     @GetMapping("/offerList/{executorId}")
@@ -59,20 +70,34 @@ public class OrderControl {
         List<Order> orderList = orderService.userOrderStatus(userDetails.getId(), Status.ACTIVE);
         model.addAttribute("orders", orderList);
         model.addAttribute("executor", executor);
-        return "orderList";
+        return "orderDir/orderList";
     }
 
     @PostMapping("/offer")
-    public String addOffer(@RequestParam(name = "orderId") Order order, @RequestParam(name = "executorId") Executor executor ) {
+    public String addOffer(@RequestParam(name = "orderId") Order order, @RequestParam(name = "executorId") Executor executor) {
         orderService.addOffer(order, executor);
         return "redirect:/executor/" + executor.getId() + "?offerSuccess=true";
     }
 
     @GetMapping("/category/active")
-    public String getActiveOrder(Map<String, Object> model) {
-        List<Order> orderList = orderService.getOrdersByStatus(Status.ACTIVE);
+    public String getActiveOrder(@AuthenticationPrincipal UserDetailsImpl userDetails, Map<String, Object> model) {
+        List<Order> orderList;
+
+
+        if (userDetails == null) {
+            orderList = orderService.getAllOrdersByStatus(Status.ACTIVE);
+        } else {
+            Executor executor = executorService.getExecutor(userDetails.getId());
+            if (executor == null) {
+                orderList = orderService.getOrdersByStatusAndNotAuth(Status.ACTIVE, userDetails.getId());
+
+            } else {
+                orderList = orderService.getOrdersByStatus(Status.ACTIVE, userDetails.getId(), executor);
+
+            }
+        }
         model.put("orders", orderList);
-        return "orderList";
+        return "orderDir/orderList";
     }
 
     @GetMapping("/category")
@@ -80,34 +105,64 @@ public class OrderControl {
         List<Category> categoryList = orderService.allCategory();
         model.addAttribute("categories", categoryList);
         model.addAttribute("isCategory", true);
-        return "orderList";
+        return "orderDir/orderList";
     }
 
     @GetMapping("/category/{categoryId}")
-    public String getOrdersByCategory(@PathVariable Long categoryId, Model model) {
-        List<Order> orderList = orderService.categoryOrder(categoryId);
+    public String getOrdersByCategory(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                      @PathVariable Long categoryId,
+                                      Model model) {
+        List<Order> orderList;
+
+        if (userDetails == null) {
+            orderList = orderService.categoryOrder(categoryId, Status.ACTIVE, -1L);
+        } else {
+            orderList = orderService.categoryOrder(categoryId, Status.ACTIVE, userDetails.getId());
+        }
         model.addAttribute("orders", orderList);
-        return "orderList";
+        return "orderDir/orderList";
     }
 
     @GetMapping("/user")
-    public String ownOrders(@AuthenticationPrincipal UserDetailsImpl userDetails, Map<String, Object> model) {
+    public String ownOrders(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                            @RequestParam(required = false) boolean createExecutor,
+                            Model model) {
+
+        if (createExecutor) {
+            model.addAttribute("message", "Создайте исполнителя?");
+
+        }
 
         List<Order> orderList = orderService.userOrder(userDetails.getId());
+        model.addAttribute("orders", orderList);
+        return "orderDir/myOrders";
+    }
+
+    @GetMapping("/other")
+    public String otherOrders(@AuthenticationPrincipal UserDetailsImpl userDetails,
+
+                              Map<String, Object> model) {
+
+        Executor executor = executorService.getExecutor(userDetails.getId());
+        if (executor == null) {
+            return "redirect:/order/user?createExecutor=true";
+        }
+
+        List<Order> orderList = orderService.getOtherOrders(executor);
         model.put("orders", orderList);
-        return "orderList";
+        model.put("executor", executor);
+        return "orderDir/offerOrders";
     }
 
     @GetMapping("/create")
-    public String createOrder(@RequestParam(required = false) boolean success,  Map<String, Object> model)
-    {
+    public String createOrder(@RequestParam(required = false) boolean success, Map<String, Object> model) {
         if (success) {
             model.put("message", "Order was created");
         }
         List<Category> categories = orderService.allCategory();
         model.put("categories", categories);
         model.put("isCreate", true);
-        return "order";
+        return "orderDir/order";
     }
 
     @PostMapping("/create")
@@ -117,20 +172,18 @@ public class OrderControl {
         List<Category> categories = orderService.allCategory();
         model.addAttribute("categories", categories);
 
-        User user = orderService.findUser(userDetails.getUsername());
-
         model.addAttribute("isCreate", true);
 
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
             model.mergeAttributes(errors);
 
-            return "order";
+            return "orderDir/order";
         }
 
-        if (!orderService.createOrder(user, orderDto)) {
+        if (!orderService.createOrder(userDetails.getId(), orderDto)) {
             model.addAttribute("orderError", "Order not create!");
-            return "order";
+            return "orderDir/order";
         }
         return "redirect:/order/create?success=true";
     }
@@ -146,7 +199,7 @@ public class OrderControl {
         model.addAttribute("categories", categories);
         model.addAttribute("isCreate", false);
         model.addAttribute("order", order);
-        return "order";
+        return "orderDir/order";
     }
 
     @PostMapping("/update")
@@ -163,52 +216,58 @@ public class OrderControl {
             Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
             model.mergeAttributes(errors);
 
-            return "order";
+            return "orderDir/order";
         }
 
         if (!orderService.updateOrder(order, orderDto)) {
             model.addAttribute("orderError", "Order not update!");
-            return "order";
+            return "orderDir/order";
         }
         return "redirect:/order/update/" + order.getId() + "?success=true";
     }
 
     @PostMapping("/subscribe")
-    public String subscribeOrder(@RequestParam(name = "orderId", required = false) Order order, @RequestParam(name = "userId") User user ) {
+    public String subscribeOrder(@RequestParam(name = "orderId", required = false) Order order, @RequestParam(name = "userId") User user) {
         if (!orderService.subscribeUser(order, user)) {
-
+            return "redirect:/order/" + order.getId() + "?createExecutor=true";
         }
-        return "redirect:/order/"+order.getId()+"?subscribe=true";
+        return "redirect:/order/" + order.getId() + "?subscribe=true";
     }
 
     @PostMapping("/confirm")
-    public String confirmOrder(@RequestParam(name = "orderId") Order order, @RequestParam(name = "subscribeId") Executor executor ) {
-        if (!orderService.confirm(order, executor)) {
+    public String confirmOrder(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                               @RequestParam(name = "orderId") Order order,
+                               @RequestParam(name = "subscribeId") Executor executor) {
+        if (!orderService.confirm(order, executor, userDetails.getId())) {
 
         }
-        return "redirect:/order/"+order.getId()+"?confirm=true";
+        return "redirect:/order/" + order.getId() + "?confirm=true";
     }
 
     @PostMapping("/done")
-    public String doneOrder(@RequestParam(name = "orderId", required = false) Order order) {
-        if (!orderService.doneOrder(order)) {
-
+    public String doneOrder(@RequestParam(name = "orderId", required = false) Order order,
+                            @RequestParam(name = "executorId", required = false) Executor executor,
+                            @RequestParam boolean doneSuccess) {
+        if (doneSuccess) {
+            orderService.doneOrder(order, executor);
+            return "redirect:/order/" + order.getId() + "?doneSuccess=true";
+        } else {
+            orderService.loseOrder(order, executor);
+            return "redirect:/order/" + order.getId() + "?loseSuccess=true";
         }
-        return "redirect:/order/"+order.getId()+"?done=true";
     }
 
     @PostMapping("/offerAnswer")
-    public String answerOffer(@RequestParam(name = "orderId") Order order,
+    public String answerOffer(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                              @RequestParam(name = "orderId") Order order,
                               @RequestParam(name = "executorId", required = false) Executor executor,
                               @RequestParam boolean getOffer) {
         if (getOffer) {
-            orderService.confirm(order, executor);
+            orderService.confirm(order, executor, userDetails.getId());
             return "redirect:/executor/" + executor.getId() + "?takeOffer=true";
         }
         orderService.reject(order);
         return "redirect:/executor/" + executor.getId() + "?rejectOffer=true";
     }
-
-
 
 }

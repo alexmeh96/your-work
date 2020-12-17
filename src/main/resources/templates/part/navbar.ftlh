@@ -3,16 +3,15 @@
 
 <#macro navbar>
     <div>
-        <a href="/">Main</a>
+        <a href="/">Главная</a>
         <a href="/order/category">Задания</a>
         <a href="/executor/category">Исполнители</a>
         <#if user??>
-            <a href="/order/create">Создать задание</a>
             <a href="/order/user">Мои задания</a>
-            <a href="/profile">Мой профиль</a>
+            <a href="/profile">Профиль</a>
         </#if>
         <#if isAdmin>
-            <a href="/category/create">Создать категорию</a>
+            <a href="/admin">Admin</a>
         </#if>
 
         <#if user??>

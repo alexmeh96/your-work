@@ -13,4 +13,6 @@ public interface ExecutorRepo extends JpaRepository<Executor, Long> {
     boolean existsByAuth_Id(Long id);
     Executor findAllByAuth_Id(Long id);
     List<Executor> findAllByStatus(Status status);
+
+
 }

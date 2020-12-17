@@ -35,7 +35,11 @@ public class UserService {
         return userRepo.count();
     }
 
-    public boolean createFirstUser(User user) {
+    public boolean createFirstUser(User user, String name) {
+        Profile profile = new Profile(name);
+
+        user.setProfile(profile);
+        profile.setAuth(user);
         userRepo.save(user);
         return true;
     }

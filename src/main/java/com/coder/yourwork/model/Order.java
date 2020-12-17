@@ -41,8 +41,8 @@ public class Order {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "orders_subscribers",
-            joinColumns = @JoinColumn(name = "subscribe_id"),
-            inverseJoinColumns = @JoinColumn(name = "order_id"))
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "subscribe_id"))
     private List<Executor> subscribers = new ArrayList<>();
     //
     @ManyToOne(cascade = CascadeType.ALL)

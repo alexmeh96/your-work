@@ -2,7 +2,6 @@ package com.coder.yourwork.controller;
 
 import com.coder.yourwork.dto.ExecutorDto;
 import com.coder.yourwork.model.*;
-import com.coder.yourwork.repo.CategoryRepo;
 import com.coder.yourwork.service.CategoryService;
 import com.coder.yourwork.service.ExecutorService;
 import com.coder.yourwork.service.UserDetailsImpl;
@@ -50,14 +49,14 @@ public class ExecutorControl {
         }
         model.addAttribute("executor", executor);
 
-        return "executorId";
+        return "executorDir/executorId";
     }
 
     @GetMapping("/category/active")
     public String allOrder(Map<String, Object> model) {
         List<Executor> executorList = executorService.statusExecutors(Status.ACTIVE);
         model.put("executors", executorList);
-        return "executorList";
+        return "executorDir/executorList";
     }
 
     @GetMapping("/category")
@@ -65,13 +64,13 @@ public class ExecutorControl {
         List<Category> categoryList = categoryService.allCategory();
         model.addAttribute("categories", categoryList);
         model.addAttribute("isCategory", true);
-        return "executorList";
+        return "executorDir/executorList";
     }
 
     @GetMapping("/category/{categoryId}")
     public String categoryOrder(@PathVariable(name = "categoryId") Category category, Model model) {
         model.addAttribute("category", category);
-        return "executorList";
+        return "executorDir/executorList";
     }
 
     @GetMapping("/create")
@@ -79,7 +78,7 @@ public class ExecutorControl {
         List<Category> categoryList = categoryService.allCategory();
         model.addAttribute("categories", categoryList);
         model.addAttribute("isCreate", true);
-        return "executor";
+        return "executorDir/executor";
     }
 
     @PostMapping("/create")
@@ -93,12 +92,12 @@ public class ExecutorControl {
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
             model.mergeAttributes(errors);
-            return "executor";
+            return "executorDir/executor";
         }
 
         if (!executorService.addExecutor(user, executorDto)) {
             model.addAttribute("executorError", "Executor not create!");
-            return "executor";
+            return "executorDir/executor";
         }
 
         return "redirect:/profile?executorCreate=true";
@@ -120,7 +119,7 @@ public class ExecutorControl {
         model.addAttribute("isCreate", false);
         model.addAttribute("executor", executor);
         model.addAttribute("executor_categories", categoriesName);
-        return "executor";
+        return "executorDir/executor";
     }
 
     @PostMapping("/update")
@@ -140,12 +139,12 @@ public class ExecutorControl {
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
             model.mergeAttributes(errors);
-            return "executor";
+            return "executorDir/executor";
         }
 
         if (!executorService.updateExecute(executor, executorDto)) {
             model.addAttribute("executorError", "Executor not update!");
-            return "executor";
+            return "executorDir/executor";
         }
 
         return "redirect:/executor/update?success=true";

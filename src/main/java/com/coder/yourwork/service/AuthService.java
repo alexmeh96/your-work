@@ -1,6 +1,7 @@
 package com.coder.yourwork.service;
 
 import com.coder.yourwork.dto.UserDto;
+import com.coder.yourwork.model.Profile;
 import com.coder.yourwork.model.Role;
 import com.coder.yourwork.model.User;
 import com.coder.yourwork.repo.UserRepo;
@@ -35,6 +36,11 @@ public class AuthService {
                 passwordEncoder.encode(userDto.getPassword()),
                 Collections.singleton(Role.USER)
         );
+        Profile profile = new Profile(userDto.getName());
+
+        newUser.setProfile(profile);
+        profile.setAuth(newUser);
+
         userRepo.save(newUser);
 
         return true;

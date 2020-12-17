@@ -8,8 +8,18 @@
                 </div>
             </#if>
         </div>
+        <#if isRegisterForm>
+            <div>
+                <label>Имя: <input type="text" name="name"/></label>
+                <#if nameError??>
+                    <div>
+                        ${nameError}
+                    </div>
+                </#if>
+            </div>
+        </#if>
         <div>
-            <label>Password: <input type="password" name="password"/></label>
+            <label>Пароль: <input type="password" name="password"/></label>
             <#if passwordError??>
                 <div>
                     ${passwordError}
@@ -18,7 +28,7 @@
         </div>
         <#if isRegisterForm>
             <div>
-                <label>Password: <input type="password" name="password2"/></label>
+                <label>Пароль: <input type="password" name="password2"/></label>
                 <#if password2Error??>
                     <div>
                         ${password2Error}
@@ -38,6 +48,6 @@
 <#macro logout>
     <form action="/logout" method="post">
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <input type="submit" value="Выход"/>
+        <input type="submit" value="Выйти"/>
     </form>
 </#macro>

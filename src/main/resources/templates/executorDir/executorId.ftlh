@@ -1,7 +1,7 @@
-<#import "part/common.ftlh" as c>
-<#import "part/navbar.ftlh" as n>
-<#import "part/category.ftlh" as cat>
-<#include "part/security.ftlh">
+<#import "../part/common.ftlh" as c>
+<#import "../part/navbar.ftlh" as n>
+<#import "../part/category.ftlh" as cat>
+<#include "../part/security.ftlh">
 
 <@c.page>
     <@n.navbar />

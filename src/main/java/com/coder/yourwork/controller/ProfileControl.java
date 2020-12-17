@@ -28,7 +28,7 @@ public class ProfileControl {
         Profile profile = userService.getUserProfile(userDetails.getId());
 
         if (executorCreat) {
-            model.addAttribute("message", "Executor was created");
+            model.addAttribute("message", "Исполнитель был создан!");
         }
 
         if (userService.executorExist(userDetails.getId())) {

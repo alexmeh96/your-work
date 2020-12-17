@@ -4,16 +4,21 @@
 <@c.page>
     <@n.navbar />
     <@n.mes />
-    <h1>Profile page</h1>
+    <h1>Профиль пользователя</h1>
 
     <#if executorExist??>
-        <p><a href="/executor/update">Редактировать свой профиль исполнителя</a></p>
+        <p><a href="/executor/update">Редактировать своего исполнителя</a></p>
     <#else>
-        <p><a href="/executor/create">Сделать себя исполнителем</a></p>
+        <p><a href="/executor/create">Создать исполнителя</a></p>
     </#if>
+    <p><a href="#">Настройки</a></p>
 
     <#if profile??>
-        <div>First name ${profile.firstName}</div>
-        <div>First name ${profile.lastName}</div>
+        <div>Имя: ${profile.name}</div>
+        <p><b>Задания:</b></p>
+        <div>Успешных: ${profile.amountExecutedOrdersSuccess}</div>
+        <div>Проваленных: ${profile.amountExecutedOrdersWrong}</div>
+        <div>Действующих: ${profile.amountExecutionOrders}</div>
+        <div>Предложенных: ${profile.amountMakeOrders}</div>
     </#if>
 </@c.page>

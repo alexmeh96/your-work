@@ -5,4 +5,6 @@
 <@c.page>
     <@n.navbar />
     <h1>Admin page</h1>
+    <a href="/category/create">Создать категорию</a>
+
 </@c.page>

@@ -52,7 +52,6 @@
         </#if>
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
 
-
         <div>
             <button type="submit"><#if isCreate>Создать<#else>Изменить</#if></button>
         </div>

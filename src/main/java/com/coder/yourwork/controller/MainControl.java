@@ -1,16 +1,9 @@
 package com.coder.yourwork.controller;
 
-import com.coder.yourwork.model.Profile;
-import com.coder.yourwork.service.UserDetailsImpl;
 import com.coder.yourwork.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.Map;
 
 @Controller
 public class MainControl {
@@ -24,7 +17,7 @@ public class MainControl {
 
     @GetMapping("/")
     public String greeting() {
-        return "greeting";
+        return "main";
     }
 
 //    @GetMapping("/main")
@@ -33,11 +26,11 @@ public class MainControl {
 //        return "main";
 //    }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/admin")
-    public String userList() {
-        return "admin";
-    }
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    @GetMapping("/admin")
+//    public String userList() {
+//        return "admin";
+//    }
 
 
 }
