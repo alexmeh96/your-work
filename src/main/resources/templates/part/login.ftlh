@@ -1,16 +1,25 @@
 <#macro login path isRegisterForm>
-    <form action="${path}" method="post">
-        <div>
-            <label>Email: <input type="email" name="email"/></label>
+    <form action="${path}" method="post" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email"
+                   required placeholder="email">
+            <div class="invalid-feedback">
+                Поле не должно быть пустым
+            </div>
             <#if emailError??>
-                <div>
+                <div >
                     ${emailError}
                 </div>
             </#if>
         </div>
         <#if isRegisterForm>
-            <div>
-                <label>Имя: <input type="text" name="name"/></label>
+            <div class="mb-3">
+                <label for="exampleInputName" class="form-label">Имя</label>
+                <input type="text" class="form-control" id="exampleInputName" name="name" required placeholder="имя">
+                <div class="invalid-feedback">
+                    Поле не должно быть пустым
+                </div>
                 <#if nameError??>
                     <div>
                         ${nameError}
@@ -18,8 +27,12 @@
                 </#if>
             </div>
         </#if>
-        <div>
-            <label>Пароль: <input type="password" name="password"/></label>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Пароль</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" name="password" required placeholder="пароль">
+            <div class="invalid-feedback">
+                Поле не должно быть пустым
+            </div>
             <#if passwordError??>
                 <div>
                     ${passwordError}
@@ -27,19 +40,25 @@
             </#if>
         </div>
         <#if isRegisterForm>
-            <div>
-                <label>Пароль: <input type="password" name="password2"/></label>
+            <div class="mb-3">
+                <label for="exampleInputPassword2" class="form-label">Повторите пароль</label>
+                <input type="password" class="form-control" id="exampleInputPassword2" name="password2" required placeholder="повторите пароль">
+                <div class="invalid-feedback">
+                    Поле не должно быть пустым
+                </div>
                 <#if password2Error??>
-                    <div>
+                    <div class="feedback">
                         ${password2Error}
                     </div>
                 </#if>
             </div>
         </#if>
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <#if !isRegisterForm><a href="/registration">Создать пользователя</a></#if>
+        <#if !isRegisterForm>
+            <div class="mb-3"><a href="/registration">Создать пользователя</a></div>
+        </#if>
         <div>
-            <button type="submit"><#if isRegisterForm>Создать<#else>Войти</#if></button>
+            <button type="submit" class="btn btn-primary"><#if isRegisterForm>Создать<#else>Войти</#if></button>
         </div>
 
     </form>
@@ -48,6 +67,6 @@
 <#macro logout>
     <form action="/logout" method="post">
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <input type="submit" value="Выйти"/>
+        <button type="submit" class="btn btn-primary">Выйти</button>
     </form>
 </#macro>

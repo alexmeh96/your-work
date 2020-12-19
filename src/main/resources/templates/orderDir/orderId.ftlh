@@ -1,11 +1,10 @@
 <#import "../part/common.ftlh" as c>
-<#import "../part/navbar.ftlh" as n>
 <#import "../part/category.ftlh" as cat>
 <#include "../part/security.ftlh">
 
+
 <@c.page>
-    <@n.navbar />
-    <@n.mes />
+
     <h1>Orders</h1>
     <div>Название: ${order.name}</div>
     <div>Категория: ${order.category.name}</div>

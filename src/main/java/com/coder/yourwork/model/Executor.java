@@ -21,8 +21,7 @@ public class Executor {
     private String lastName;
     private String describe;
 
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    private boolean active;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(	name = "executor_category",
@@ -42,9 +41,10 @@ public class Executor {
     @OneToMany(mappedBy = "offerExecutor", cascade = CascadeType.ALL)
     private List<Order> offers = new ArrayList<>();
 
-    public Executor(String firstName, String lastName, String describe) {
+    public Executor(String firstName, String lastName, String describe, boolean active) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.describe = describe;
+        this.active = active;
     }
 }

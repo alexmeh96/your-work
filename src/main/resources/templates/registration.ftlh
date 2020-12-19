@@ -1,10 +1,8 @@
 <#import "part/common.ftlh" as c>
 <#import "part/login.ftlh" as l>
-<#import "part/navbar.ftlh" as n>
 
 <@c.page>
-    <@n.navbar />
-    <p>Registration page</p>
+    <h1>Страница регистрации</h1>
 <#--    ${message?ifExists}-->
     <@l.login "/registration" true/>
 </@c.page>

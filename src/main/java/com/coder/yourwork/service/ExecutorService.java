@@ -34,10 +34,9 @@ public class ExecutorService {
         Executor executor = new Executor(
             executorDto.getFirstName(),
                 executorDto.getLastName(),
-                executorDto.getDescribe()
+                executorDto.getDescribe(),
+                executorDto.isActive()
         );
-
-        executor.setStatus(Status.ACTIVE);
 
         executor.setAuth(user);
         user.setExecutor(executor);
@@ -66,8 +65,9 @@ public class ExecutorService {
 
         executor.setFirstName(executorDto.getFirstName());
         executor.setLastName(executorDto.getLastName());
-        executor.setDescribe(executor.getDescribe());
+        executor.setDescribe(executorDto.getDescribe());
         executor.setCategories(categoryList);
+        executor.setActive(executorDto.isActive());
 
         executorRepo.save(executor);
 
@@ -78,8 +78,8 @@ public class ExecutorService {
         return executorRepo.findAll();
     }
 
-    public List<Executor> statusExecutors(Status status) {
-        return executorRepo.findAllByStatus(status);
+    public List<Executor> activeExecutors(Long userId) {
+        return executorRepo.findAllByActiveTrueAndAuth_IdNot(userId);
     }
 
     public Executor getExecutorByAuthId(Long id) {

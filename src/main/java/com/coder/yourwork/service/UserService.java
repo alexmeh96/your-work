@@ -1,6 +1,7 @@
 package com.coder.yourwork.service;
 
 import com.coder.yourwork.model.Profile;
+import com.coder.yourwork.model.Role;
 import com.coder.yourwork.model.User;
 import com.coder.yourwork.repo.ExecutorRepo;
 import com.coder.yourwork.repo.ProfileRepo;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -55,5 +58,15 @@ public class UserService {
 
     public void deleteUser(Long userId) {
         userRepo.deleteById(userId);
+    }
+
+    public void updateUser(User user, List<String> roleList) {
+        if (roleList == null) {
+            user.getRoles().clear();
+        } else {
+            Set<Role> roles = roleList.stream().map(Role::valueOf).collect(Collectors.toSet());
+            user.setRoles(roles);
+        }
+        userRepo.save(user);
     }
 }

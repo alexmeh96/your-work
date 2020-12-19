@@ -17,4 +17,5 @@ public class ExecutorDto {
     private String describe;
     @NotNull(message = "Category cannot be empty")
     private List<String> categoryName;
+    boolean active;
 }

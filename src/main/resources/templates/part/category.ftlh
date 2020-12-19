@@ -6,8 +6,10 @@
         </div>
     </#if>
     <form action="${path}" method="post">
-        <div>
-            <label>Name <input type="text" name="name" /></label>
+        <div class="mb-3">
+            <label for="exampleInputName1" class="form-label">Название</label>
+
+            <input type="text" name="name" id="exampleInputName1" class="form-control"/>
             <#if nameError??>
                 <div>
                     ${nameError}
@@ -17,16 +19,14 @@
 
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
 
-
-        <div>
-            <button type="submit"><#if isCreate>Create<#else>Edit</#if></button>
-        </div>
+        <button type="submit" class="btn btn-primary"><#if isCreate>Create<#else>Edit</#if></button>
 
     </form>
 
 </#macro>
 
 <#macro showCategory path>
+    <h1>Категории</h1>
     <p><a href="${path}/active">все категории</a></p>
     <#list categories as category>
         <p><a href="${path}/${category.id}">${category.name}</a></p>

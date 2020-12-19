@@ -1,19 +1,17 @@
 <#import "part/common.ftlh" as c>
 <#import "part/login.ftlh" as l>
-<#import "part/navbar.ftlh" as n>
 
 <@c.page>
-    <@n.navbar />
     <p>Пользователь: ${user.email}</p>
-    <p>Роли: </p>
-
-    <p>Удалить пользователя:
-    <form action="/admin/user/delete" method="post">
-        <input type="hidden" name="userId" value="${user.id}">
-        <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-
-        <input type="submit" value="Удалить">
+    <form action="/admin/user/update" method="post">
+        <p>Роли: </p>
+        <#list roles as role>
+            <label><input type="checkbox" name="roleList" value="${role}" ${user.roles?seq_contains(role)?string("checked", "")}>${role}
+            </label>
+        </#list>
+        <input type="hidden" value="${user.id}" name="userId">
+        <input type="hidden" value="${_csrf.token}" name="_csrf">
+        <button type="submit">Сохранить</button>
     </form>
-    </p>
 
 </@c.page>

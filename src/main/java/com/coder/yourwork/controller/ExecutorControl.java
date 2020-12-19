@@ -53,8 +53,14 @@ public class ExecutorControl {
     }
 
     @GetMapping("/category/active")
-    public String allOrder(Map<String, Object> model) {
-        List<Executor> executorList = executorService.statusExecutors(Status.ACTIVE);
+    public String allOrder(@AuthenticationPrincipal UserDetailsImpl userDetails, Map<String, Object> model) {
+        List<Executor> executorList;
+        if (userDetails == null) {
+            executorList = executorService.activeExecutors(-1l);
+        } else {
+            executorList = executorService.activeExecutors(userDetails.getId());
+
+        }
         model.put("executors", executorList);
         return "executorDir/executorList";
     }
