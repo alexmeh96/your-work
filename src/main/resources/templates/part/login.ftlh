@@ -13,20 +13,6 @@
                 </div>
             </#if>
         </div>
-        <#if isRegisterForm>
-            <div class="mb-3">
-                <label for="exampleInputName" class="form-label">Имя</label>
-                <input type="text" class="form-control" id="exampleInputName" name="name" required placeholder="имя">
-                <div class="invalid-feedback">
-                    Поле не должно быть пустым
-                </div>
-                <#if nameError??>
-                    <div>
-                        ${nameError}
-                    </div>
-                </#if>
-            </div>
-        </#if>
         <div class="mb-3">
             <label for="exampleInputPassword1" class="form-label">Пароль</label>
             <input type="password" class="form-control" id="exampleInputPassword1" name="password" required placeholder="пароль">

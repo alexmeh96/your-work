@@ -6,7 +6,7 @@
         </div>
     </#if>
 
-    <form class="needs-validation" action="${path}" method="post" novalidate>
+    <form class="needs-validation" action="${path}" method="post" novalidate enctype="multipart/form-data">
 
         <div class="form-check mb-3">
             <#if executor??>
@@ -23,30 +23,25 @@
 
         <div class="mb-3">
             <label for="validationCustom01" class="form-label">Имя</label>
-            <input type="text" class="form-control" name="firstName" id="validationCustom01"
-                   <#if executor??>value="${executor.firstName}"</#if> required />
+            <input type="text" class="form-control" name="name" id="validationCustom01"
+                   <#if executor??>value="${executor.name}"</#if> required />
             <div class="invalid-feedback">
                 поле не должно быть пустым.
             </div>
-            <#if firstNameError??>
+            <#if nameError??>
                 <div>
-                    ${firstNameError}
+                    ${nameError}
                 </div>
             </#if>
         </div>
+
         <div class="mb-3">
-            <label for="validationCustom02" class="form-label">Фамилия</label>
-            <input type="text" class="form-control" name="lastName" id="validationCustom02"
-                   <#if executor??>value="${executor.lastName}"</#if> required />
-            <div class="invalid-feedback">
-                поле не должно быть пустым.
-            </div>
-            <#if lastNameError??>
-                <div>
-                    ${lastNameError}
-                </div>
-            </#if>
+            <label for="formFile" class="form-label">Аватарка</label>
+            <input class="form-control" type="file" id="formFile" name="avatar">
         </div>
+
+
+
         <div class="mb-3">
             <label for="validationCustom03" class="form-label">Описание</label>
             <input type="text" class="form-control" name="describe" id="validationCustom03"
@@ -57,6 +52,34 @@
             <#if describeError??>
                 <div>
                     ${describeError}
+                </div>
+            </#if>
+        </div>
+
+        <div class="mb-3">
+            <label for="validationCustom04" class="form-label">Email</label>
+            <input type="email" class="form-control" name="email" id="validationCustom04"
+                   <#if executor??>value="${executor.email}"</#if> required />
+            <div class="invalid-feedback">
+                поле не должно быть пустым.
+            </div>
+            <#if nameError??>
+                <div>
+                    ${nameError}
+                </div>
+            </#if>
+        </div>
+
+        <div class="mb-3">
+            <label for="validationCustom05" class="form-label">Номер телефона</label>
+            <input type="text" class="form-control" name="phone" id="validationCustom05"
+                   <#if executor??>value="${executor.phone}"</#if> required />
+            <div class="invalid-feedback">
+                поле не должно быть пустым.
+            </div>
+            <#if nameError??>
+                <div>
+                    ${nameError}
                 </div>
             </#if>
         </div>

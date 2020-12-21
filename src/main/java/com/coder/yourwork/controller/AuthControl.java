@@ -42,12 +42,6 @@ public class AuthControl {
         return "login";
     }
 
-//    @PostMapping("/login")
-//    public String signIn(UserDto userDto, Map<String, Object> model) {
-//
-//        return "redirect:/main";
-//    }
-
     @GetMapping("/registration")
     public String registration() {
         return "registration";

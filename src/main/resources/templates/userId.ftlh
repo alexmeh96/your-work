@@ -11,7 +11,7 @@
         </#list>
         <input type="hidden" value="${user.id}" name="userId">
         <input type="hidden" value="${_csrf.token}" name="_csrf">
-        <button type="submit">Сохранить</button>
+        <button class="btn btn-primary ms-3" type="submit">Сохранить</button>
     </form>
 
 </@c.page>

@@ -4,9 +4,11 @@ import com.coder.yourwork.dto.ExecutorDto;
 import com.coder.yourwork.model.*;
 import com.coder.yourwork.repo.CategoryRepo;
 import com.coder.yourwork.repo.ExecutorRepo;
+import com.coder.yourwork.repo.ImageRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -15,6 +17,10 @@ import java.util.stream.Collectors;
 public class ExecutorService {
     private final ExecutorRepo executorRepo;
     private final CategoryRepo categoryRepo;
+    @Autowired
+    private ImageRepo imageRepo;
+    @Autowired
+    private ImageService imageService;
 
     @Autowired
     public ExecutorService(ExecutorRepo executorRepo, CategoryRepo categoryRepo) {
@@ -32,11 +38,22 @@ public class ExecutorService {
         List<Category> categories = categoryRepo.findByNameIn(executorDto.getCategoryName());
 
         Executor executor = new Executor(
-            executorDto.getFirstName(),
-                executorDto.getLastName(),
+            executorDto.getName(),
                 executorDto.getDescribe(),
                 executorDto.isActive()
         );
+        executor.setEmail(executorDto.getEmail());
+        executor.setPhone(executorDto.getPhone());
+
+        Image image = null;
+        try {
+            image = imageService.loadImage(executorDto.getAvatar());
+            Long id = imageRepo.save(image).getId();
+            executor.setAvatarId(id);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         executor.setAuth(user);
         user.setExecutor(executor);
@@ -63,11 +80,23 @@ public class ExecutorService {
 
         if (categoryList == null) return false;
 
-        executor.setFirstName(executorDto.getFirstName());
-        executor.setLastName(executorDto.getLastName());
+        executor.setName(executorDto.getName());
         executor.setDescribe(executorDto.getDescribe());
         executor.setCategories(categoryList);
         executor.setActive(executorDto.isActive());
+        executor.setPhone(executorDto.getPhone());
+        executor.setEmail(executorDto.getEmail());
+
+        if (executorDto.getAvatar() !=null ) {
+            Image image = null;
+            try {
+                image = imageService.loadImage(executorDto.getAvatar());
+                Long id = imageRepo.save(image).getId();
+                executor.setAvatarId(id);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         executorRepo.save(executor);
 
@@ -78,13 +107,19 @@ public class ExecutorService {
         return executorRepo.findAll();
     }
 
-    public List<Executor> activeExecutors(Long userId) {
-        return executorRepo.findAllByActiveTrueAndAuth_IdNot(userId);
+    public List<Executor> activeExecutors() {
+        return executorRepo.findAllByActiveTrue();
     }
 
     public Executor getExecutorByAuthId(Long id) {
         return executorRepo.findAllByAuth_Id(id);
     }
+
+    public List<Executor> getFirstExecutors() {
+        return executorRepo.findFirst5ByOrderByProfile_amountExecutedOrdersSuccess();
+    }
+
+
 
 //    public void addOrder(Order order, Executor executor) {
 //        order.setStatus(Status.PROCESSING);

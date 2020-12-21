@@ -39,7 +39,6 @@ public class ExecutorControl {
                               @RequestParam(required = false) boolean rejectOffer,
                               Model model) {
 
-
         if (offerSuccess) {
             model.addAttribute("message", "задание было предложено");
         } else if (takeOffer) {
@@ -47,40 +46,47 @@ public class ExecutorControl {
         } else if (rejectOffer) {
             model.addAttribute("message", "вы отклонили задание");
         }
+
+        Profile profile = userService.getUserProfile(executor.getAuth().getId());
+        model.addAttribute("profile", profile);
         model.addAttribute("executor", executor);
+
 
         return "executorDir/executorId";
     }
 
-    @GetMapping("/category/active")
-    public String allOrder(@AuthenticationPrincipal UserDetailsImpl userDetails, Map<String, Object> model) {
-        List<Executor> executorList;
-        if (userDetails == null) {
-            executorList = executorService.activeExecutors(-1l);
-        } else {
-            executorList = executorService.activeExecutors(userDetails.getId());
+    @GetMapping("/all")
+    public String getAllExecutors(Model model) {
+        List<Category> categoryList = categoryService.allCategory();
+        if (categoryList != null && !categoryList.isEmpty()) {
+            model.addAttribute("categories", categoryList);
+        }
+
+        List<Executor> executorList = executorService.activeExecutors();
+        if (executorList != null && !executorList.isEmpty()) {
+            model.addAttribute("executors", executorList);
+        }
+        return "executorDir/executorList";
+    }
+
+    @GetMapping("all/{categoryId}")
+    public String getAllExecutorsByCategoryId(@PathVariable(name = "categoryId") Category category,
+                                              Model model) {
+        List<Category> categoryList = categoryService.allCategory();
+        if (categoryList != null && !categoryList.isEmpty()) {
+            model.addAttribute("categories", categoryList);
+        }
+
+        List<Executor> executorList = category.getExecutors();
+        if (executorList != null && !executorList.isEmpty()) {
+            model.addAttribute("executors", executorList);
 
         }
-        model.put("executors", executorList);
-        return "executorDir/executorList";
-    }
-
-    @GetMapping("/category")
-    public String categoryList(Model model) {
-        List<Category> categoryList = categoryService.allCategory();
-        model.addAttribute("categories", categoryList);
-        model.addAttribute("isCategory", true);
-        return "executorDir/executorList";
-    }
-
-    @GetMapping("/category/{categoryId}")
-    public String categoryOrder(@PathVariable(name = "categoryId") Category category, Model model) {
-        model.addAttribute("category", category);
         return "executorDir/executorList";
     }
 
     @GetMapping("/create")
-    public String createExecutor( Model model) {
+    public String createExecutor(Model model) {
         List<Category> categoryList = categoryService.allCategory();
         model.addAttribute("categories", categoryList);
         model.addAttribute("isCreate", true);

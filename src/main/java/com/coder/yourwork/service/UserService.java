@@ -39,8 +39,8 @@ public class UserService {
         return userRepo.count();
     }
 
-    public boolean createFirstUser(User user, String name) {
-        Profile profile = new Profile(name);
+    public boolean createFirstUser(User user) {
+        Profile profile = new Profile();
 
         user.setProfile(profile);
         profile.setAuth(user);

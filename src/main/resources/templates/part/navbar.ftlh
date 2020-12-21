@@ -14,10 +14,10 @@
                     <a class="nav-link active" aria-current="page" href="/">Главная</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/order/category">Задания</a>
+                    <a class="nav-link" href="/order/all">Задания</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/executor/category">Исполнители</a>
+                    <a class="nav-link" href="/executor/all">Исполнители</a>
                 </li>
                 <#if user??>
                     <li class="nav-item">

@@ -22,5 +22,7 @@ public interface OrderRepo extends JpaRepository<Order, Long> {
     List<Order> findAllByExecutor_IdOrSubscribersContainingOrOfferExecutor_Id(Long id1, Executor executor, Long id3);
     List<Order> findAllByStatusAndAuthor_IdNotAndSubscribersNotContaining(Status status, Long id, Executor executor);
 
+    List<Order> findFirst5ByOrderByDate();
+
 
 }

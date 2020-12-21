@@ -16,8 +16,4 @@ public class UserDto {
     @NotBlank(message = "Пароль не должен быть пустым!")
     private String password;
     private String password2;
-
-    @NotBlank(message = "Имя не должно быть пустым!")
-    private String name;
-
 }

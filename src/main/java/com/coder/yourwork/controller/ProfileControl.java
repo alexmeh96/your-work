@@ -1,6 +1,8 @@
 package com.coder.yourwork.controller;
 
+import com.coder.yourwork.model.Executor;
 import com.coder.yourwork.model.Profile;
+import com.coder.yourwork.service.ExecutorService;
 import com.coder.yourwork.service.UserDetailsImpl;
 import com.coder.yourwork.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/profile")
 public class ProfileControl {
     private final UserService userService;
+    @Autowired
+    private ExecutorService executorService;
 
     @Autowired
     public ProfileControl(UserService userService) {
@@ -26,6 +30,11 @@ public class ProfileControl {
                           @RequestParam(required = false) boolean executorCreat,
                           Model model) {
         Profile profile = userService.getUserProfile(userDetails.getId());
+        Executor executor = executorService.getExecutor(userDetails.getId());
+
+        if (executor != null) {
+            model.addAttribute("executor", executor);
+        }
 
         if (executorCreat) {
             model.addAttribute("message", "Исполнитель был создан!");

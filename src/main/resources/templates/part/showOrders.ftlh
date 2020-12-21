@@ -43,12 +43,13 @@
                                 <#elseif order.status.name()=="LOSE">
                                     <b>Вы провалили это задание</b>
                                 <#elseif order.status.name()=="OFFER">
+                                    <p>
                                     <form action="/order/offerAnswer" method="post">
                                         <input type="hidden" name="orderId" value="${order.id}">
                                         <input type="hidden" name="executorId" value="${order.offerExecutor.id}">
                                         <input type="hidden" name="getOffer" value="true">
                                         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-                                        <button class="btn btn-primary" type="submit">Принять</button>
+                                        <button class="btn btn-primary mb-3" type="submit">Принять</button>
                                     </form>
 
                                     <form action="/order/offerAnswer" method="post">
@@ -58,7 +59,7 @@
                                         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
                                         <button class="btn btn-primary" type="submit">Отклонить</button>
                                     </form>
-
+                                    </p>
                                 </#if>
                             <#else>
                                 <#if order.status.name()=="ACTIVE">
@@ -73,13 +74,13 @@
 
                                 <#elseif order.status.name()=="PROCESSING">
                                     <p><b>выполняет задание:</b>
-                                        <a href="/executor/${order.executor.id}">${order.executor.firstName}</a>
+                                        <a href="/executor/${order.executor.id}">${order.executor.name}</a>
                                     <form action="/order/done" method="post">
                                         <input type="hidden" name="orderId" value="${order.id}"/>
                                         <input type="hidden" name="executorId" value="${order.executor.id}"/>
                                         <input type="hidden" name="doneSuccess" value="true"/>
                                         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-                                        <button class="btn btn-primary" type="submit">Выполнено</button>
+                                        <button class="btn btn-primary mb-3" type="submit">Выполнено</button>
                                     </form>
                                     <form action="/order/done" method="post">
                                         <input type="hidden" name="orderId" value="${order.id}"/>
@@ -90,7 +91,9 @@
                                     </form>
                                     </p>
                                 <#elseif order.status.name()=="OFFER">
-                                    <p><b>вы предложили задание</b> ${order.offerExecutor.firstName}</p>
+                                    <p><b>вы предложили задание</b>
+                                        <a href="/executor/${order.offerExecutor.id}">${order.offerExecutor.name}</a>
+                                    </p>
                                     <form action="/order/cancel" method="post">
                                         <input type="hidden" name="orderId" value="${order.id}"/>
                                         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
@@ -98,11 +101,11 @@
                                     </form>
                                 <#elseif order.status.name()=="DONE">
                                     <p><b>выполнил задание:</b>
-                                        <a href="/executor/${order.executor.id}">${order.executor.firstName}</a>
+                                        <a href="/executor/${order.executor.id}">${order.executor.name}</a>
                                     </p>
                                 <#elseif order.status.name()=="LOSE">
                                     <p><b>провалил задание:</b>
-                                        <a href="/executor/${order.executor.id}">${order.executor.firstName}</a>
+                                        <a href="/executor/${order.executor.id}">${order.executor.name}</a>
                                     </p>
                                 </#if>
                             </#if>

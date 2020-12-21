@@ -36,7 +36,7 @@ public class AuthService {
                 passwordEncoder.encode(userDto.getPassword()),
                 Collections.singleton(Role.USER)
         );
-        Profile profile = new Profile(userDto.getName());
+        Profile profile = new Profile();
 
         newUser.setProfile(profile);
         profile.setAuth(newUser);

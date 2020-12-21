@@ -24,17 +24,6 @@ public class CategoryControl {
     }
 
 
-
-//    @GetMapping("/all")
-//    public String allCategory(Map<String, Object> model) {
-//
-//        List<Category> categoryList = categoryService.allCategory();
-//
-//        model.put("categories", categoryList);
-//
-//        return "category";
-//    }
-
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/create")
     public String createCategory(@RequestParam(required = false) boolean success, Model model) {

@@ -4,10 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -22,6 +19,12 @@ public class Order {
     private String describe;
 
     private Long price;
+
+    private Date date;
+
+    private String nameOwner;
+    private String emailOwner;
+    private String phoneOwner;
 
     @Enumerated(EnumType.STRING)
     private Status status;

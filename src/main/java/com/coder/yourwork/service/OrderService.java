@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -61,6 +62,11 @@ public class OrderService {
                 orderDto.getName(),
                 orderDto.getDescribe()
         );
+        order.setNameOwner(orderDto.getNameOwner());
+        order.setEmailOwner(orderDto.getEmailOwner());
+        order.setPhoneOwner(orderDto.getPhoneOwner());
+        order.setPrice(orderDto.getPrice());
+        order.setDate(new Date());
         order.setStatus(Status.ACTIVE);
 
         order.setCategory(category);
@@ -69,7 +75,6 @@ public class OrderService {
         order.setAuthor(user);
         user.getOwnOrders().add(order);
 
-//        profileRepo.save(profile);
         orderRepo.save(order);
         return true;
 
@@ -187,5 +192,9 @@ public class OrderService {
 //        profileRepo.save(profile);
 
         orderRepo.deleteById(orderId);
+    }
+
+    public List<Order> getFirstOrders() {
+        return orderRepo.findFirst5ByOrderByDate();
     }
 }

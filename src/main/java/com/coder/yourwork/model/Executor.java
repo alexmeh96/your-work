@@ -17,11 +17,15 @@ public class Executor {
     @GeneratedValue
     private Long id;
 
-    private String firstName;
-    private String lastName;
+    private String name;
     private String describe;
 
+    private String email;
+    private String phone;
+
     private boolean active;
+
+    private Long avatarId;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(	name = "executor_category",
@@ -32,6 +36,9 @@ public class Executor {
     @OneToOne(mappedBy = "executor", cascade = CascadeType.ALL)
     private User auth;
 
+    @OneToOne(mappedBy = "executor", cascade = CascadeType.ALL)
+    private Profile profile;
+
     @ManyToMany(mappedBy = "subscribers", cascade = CascadeType.ALL)
     private List<Order> subscriptions = new ArrayList<>();
 
@@ -41,9 +48,8 @@ public class Executor {
     @OneToMany(mappedBy = "offerExecutor", cascade = CascadeType.ALL)
     private List<Order> offers = new ArrayList<>();
 
-    public Executor(String firstName, String lastName, String describe, boolean active) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public Executor(String name, String describe, boolean active) {
+        this.name = name;
         this.describe = describe;
         this.active = active;
     }

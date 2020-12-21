@@ -30,7 +30,7 @@ public class YourWorkApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if (userService.countUser() == 0) {
             User user = new User("admin@email.com", passwordEncoder.encode("admin"), Set.of(Role.USER, Role.ADMIN));
-            userService.createFirstUser(user, "admin");
+            userService.createFirstUser(user);
 
         }
     }

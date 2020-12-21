@@ -7,14 +7,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Data
-@NoArgsConstructor
 @Entity
 public class Profile {
     @Id
     @GeneratedValue
     private Long id;
 
-    private String name;
     private Long amountExecutionOrders;
     private Long amountExecutedOrdersSuccess;
     private Long amountExecutedOrdersWrong;
@@ -24,8 +22,11 @@ public class Profile {
     @OneToOne(mappedBy = "profile", cascade = CascadeType.ALL)
     private User auth;
 
-    public Profile(String name) {
-        this.name = name;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "executor_id")
+    private Executor executor;
+
+    public Profile() {
         this.amountExecutionOrders = 0l;
         this.amountExecutedOrdersSuccess = 0l;
         this.amountExecutedOrdersWrong = 0l;

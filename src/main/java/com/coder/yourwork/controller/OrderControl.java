@@ -2,6 +2,7 @@ package com.coder.yourwork.controller;
 
 import com.coder.yourwork.dto.OrderDto;
 import com.coder.yourwork.model.*;
+import com.coder.yourwork.service.CategoryService;
 import com.coder.yourwork.service.ExecutorService;
 import com.coder.yourwork.service.OrderService;
 import com.coder.yourwork.service.UserDetailsImpl;
@@ -23,6 +24,8 @@ public class OrderControl {
     private final OrderService orderService;
     @Autowired
     private ExecutorService executorService;
+    @Autowired
+    private CategoryService categoryService;
 
     @Autowired
     public OrderControl(OrderService orderService) {
@@ -51,7 +54,12 @@ public class OrderControl {
             model.addAttribute("message", "Создайте исполнителя");
         }
 
-        Executor executor = executorService.getExecutorByAuthId(userDetails.getId());
+        Executor executor = null;
+
+        if (userDetails != null) {
+            executor = executorService.getExecutorByAuthId(userDetails.getId());
+
+        }
 
         if (executor == null) {
             model.addAttribute("isSubscribe", false);
@@ -62,6 +70,47 @@ public class OrderControl {
         model.addAttribute("order", order);
         model.addAttribute("executor", executor);
         return "orderDir/orderId";
+    }
+
+    @GetMapping("/all")
+    public String getAllOrder(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
+        List<Category> categoryList = categoryService.allCategory();
+        if (categoryList != null && !categoryList.isEmpty()) {
+            model.addAttribute("categories", categoryList);
+        }
+
+        List<Order> orderList;
+        if (userDetails == null) {
+            orderList = orderService.getOrdersByStatusAndNotAuth(Status.ACTIVE, -1L);
+        } else {
+            orderList = orderService.getOrdersByStatusAndNotAuth(Status.ACTIVE, userDetails.getId());
+        }
+
+        if (orderList != null && !orderList.isEmpty()) {
+            model.addAttribute("orders", orderList);
+        }
+
+        return "orderDir/orderList";
+    }
+
+    @GetMapping("/all/{categoryId}")
+    public String getOrdersByCategory(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                      @PathVariable Long categoryId,
+                                      Model model) {
+        List<Category> categoryList = categoryService.allCategory();
+        if (categoryList != null && !categoryList.isEmpty()) {
+            model.addAttribute("categories", categoryList);
+        }
+        List<Order> orderList;
+        if (userDetails == null) {
+            orderList = orderService.categoryOrder(categoryId, Status.ACTIVE, -1L);
+        } else {
+            orderList = orderService.categoryOrder(categoryId, Status.ACTIVE, userDetails.getId());
+        }
+        if (orderList != null && !orderList.isEmpty()) {
+            model.addAttribute("orders", orderList);
+        }
+        return "orderDir/orderList";
     }
 
     @GetMapping("/offerList/{executorId}")
@@ -79,49 +128,52 @@ public class OrderControl {
         return "redirect:/executor/" + executor.getId() + "?offerSuccess=true";
     }
 
-    @GetMapping("/category/active")
-    public String getActiveOrder(@AuthenticationPrincipal UserDetailsImpl userDetails, Map<String, Object> model) {
-        List<Order> orderList;
 
 
-        if (userDetails == null) {
-            orderList = orderService.getAllOrdersByStatus(Status.ACTIVE);
-        } else {
-            Executor executor = executorService.getExecutor(userDetails.getId());
-            if (executor == null) {
-                orderList = orderService.getOrdersByStatusAndNotAuth(Status.ACTIVE, userDetails.getId());
 
-            } else {
-                orderList = orderService.getOrdersByStatus(Status.ACTIVE, userDetails.getId(), executor);
+//    @GetMapping("/category/active")
+//    public String getActiveOrder(@AuthenticationPrincipal UserDetailsImpl userDetails, Map<String, Object> model) {
+//        List<Order> orderList;
+//
+//
+//        if (userDetails == null) {
+//            orderList = orderService.getAllOrdersByStatus(Status.ACTIVE);
+//        } else {
+//            Executor executor = executorService.getExecutor(userDetails.getId());
+//            if (executor == null) {
+//                orderList = orderService.getOrdersByStatusAndNotAuth(Status.ACTIVE, userDetails.getId());
+//
+//            } else {
+//                orderList = orderService.getOrdersByStatus(Status.ACTIVE, userDetails.getId(), executor);
+//
+//            }
+//        }
+//        model.put("orders", orderList);
+//        return "orderDir/orderList";
+//    }
 
-            }
-        }
-        model.put("orders", orderList);
-        return "orderDir/orderList";
-    }
+//    @GetMapping("/category")
+//    public String categoryList(Model model) {
+//        List<Category> categoryList = orderService.allCategory();
+//        model.addAttribute("categories", categoryList);
+//        model.addAttribute("isCategory", true);
+//        return "orderDir/orderList";
+//    }
 
-    @GetMapping("/category")
-    public String categoryList(Model model) {
-        List<Category> categoryList = orderService.allCategory();
-        model.addAttribute("categories", categoryList);
-        model.addAttribute("isCategory", true);
-        return "orderDir/orderList";
-    }
-
-    @GetMapping("/category/{categoryId}")
-    public String getOrdersByCategory(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                      @PathVariable Long categoryId,
-                                      Model model) {
-        List<Order> orderList;
-
-        if (userDetails == null) {
-            orderList = orderService.categoryOrder(categoryId, Status.ACTIVE, -1L);
-        } else {
-            orderList = orderService.categoryOrder(categoryId, Status.ACTIVE, userDetails.getId());
-        }
-        model.addAttribute("orders", orderList);
-        return "orderDir/orderList";
-    }
+//    @GetMapping("/category/{categoryId}")
+//    public String getOrdersByCategory(@AuthenticationPrincipal UserDetailsImpl userDetails,
+//                                      @PathVariable Long categoryId,
+//                                      Model model) {
+//        List<Order> orderList;
+//
+//        if (userDetails == null) {
+//            orderList = orderService.categoryOrder(categoryId, Status.ACTIVE, -1L);
+//        } else {
+//            orderList = orderService.categoryOrder(categoryId, Status.ACTIVE, userDetails.getId());
+//        }
+//        model.addAttribute("orders", orderList);
+//        return "orderDir/orderList";
+//    }
 
     @GetMapping("/user")
     public String ownOrders(@AuthenticationPrincipal UserDetailsImpl userDetails,
