@@ -11,9 +11,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class UserDto {
     @Email(message = "Некоректный Email")
-    @NotBlank(message = "Email не должен быть пустым!")
     private String email;
-    @NotBlank(message = "Пароль не должен быть пустым!")
     private String password;
     private String password2;
 }

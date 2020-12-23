@@ -1,5 +1,6 @@
 package com.coder.yourwork.service;
 
+import com.coder.yourwork.dto.UserDto;
 import com.coder.yourwork.model.Profile;
 import com.coder.yourwork.model.Role;
 import com.coder.yourwork.model.User;
@@ -7,8 +8,10 @@ import com.coder.yourwork.repo.ExecutorRepo;
 import com.coder.yourwork.repo.ProfileRepo;
 import com.coder.yourwork.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -19,6 +22,9 @@ public class UserService {
     private final ProfileRepo profileRepo;
     private final UserRepo userRepo;
     private final ExecutorRepo executorRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @Autowired
     public UserService(ProfileRepo profileRepo, UserRepo userRepo, ExecutorRepo executorRepo) {
@@ -60,7 +66,7 @@ public class UserService {
         userRepo.deleteById(userId);
     }
 
-    public void updateUser(User user, List<String> roleList) {
+    public void updateUserRole(User user, List<String> roleList) {
         if (roleList == null) {
             user.getRoles().clear();
         } else {
@@ -68,5 +74,23 @@ public class UserService {
             user.setRoles(roles);
         }
         userRepo.save(user);
+    }
+
+    public boolean updateUserEmail(User user, UserDto userDto) {
+        if (userRepo.existsByEmail(userDto.getEmail())) {
+            return false;
+        }
+
+        user.setEmail(userDto.getEmail());
+        userRepo.save(user);
+
+        return true;
+    }
+
+    public boolean updateUserPassword(User user, UserDto userDto) {
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        userRepo.save(user);
+
+        return true;
     }
 }

@@ -2,7 +2,6 @@ package com.coder.yourwork.controller;
 
 import com.coder.yourwork.model.Role;
 import com.coder.yourwork.model.User;
-import com.coder.yourwork.repo.UserRepo;
 import com.coder.yourwork.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
@@ -60,7 +58,7 @@ public class AdminControl {
     @PreAuthorize("hasAuthority('ADMIN')")
     public String updateUser(@RequestParam(name = "userId") User user, @RequestParam(required = false) List<String> roleList) {
 
-        userService.updateUser(user, roleList);
+        userService.updateUserRole(user, roleList);
         return "redirect:/admin/userList?update=true";
     }
 }

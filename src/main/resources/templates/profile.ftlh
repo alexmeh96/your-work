@@ -6,7 +6,7 @@
     <#if !executorExist??>
         <p><a href="/executor/create">Создать исполнителя</a></p>
     </#if>
-<#--    <p><a href="#">Настройки</a></p>-->
+    <p><a href="/profile/setting">Настройки</a></p>
 
 
     <div class="row">
